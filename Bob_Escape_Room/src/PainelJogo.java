@@ -1,6 +1,7 @@
 import javax.swing.JPanel; //importa componente visual para gerar a tela
 import java.awt.*; //usado para configurar tamanho da tela e desenhar imagens
 import java.awt.image.BufferedImage; //armazena imagens carregadas
+import java.io.InputStream;
 import javax.imageio.ImageIO; //carrega imagens de arquivos, no nosso caso os cenarios
 
 //Aqui determinamos que nosso painel é um JPanel, e runnable fica atualizando a tela constantemente
@@ -17,8 +18,10 @@ public class PainelJogo extends JPanel implements Runnable{
     Controle controle = new Controle();
 
     Jogador jogador = new Jogador(controle);
+    Cenario cenario = new Cenario();
 
     BufferedImage background;
+    String cenarioAtual;
 
     public PainelJogo(){
 
@@ -34,8 +37,9 @@ public class PainelJogo extends JPanel implements Runnable{
         try {
 
             background = ImageIO.read(
-                    getClass().getResourceAsStream("/Cenários/Cenários/entrada.png")
+                    getClass().getResourceAsStream("/Cenários/entrada.png")
             );
+            cenarioAtual = "Entrada";
 
         } catch (Exception e) {
 
@@ -68,7 +72,49 @@ public class PainelJogo extends JPanel implements Runnable{
 
 
     public void update(){
+
         jogador.update();
+
+        String novoCenario = cenario.updateCenario(cenarioAtual, jogador, screenWidth);
+
+        if (!novoCenario.equals(cenarioAtual)) {
+            cenarioAtual = novoCenario;
+            carregarCenario(cenarioAtual);
+        }
+    }
+
+    private void carregarCenario(String nomeCenario) {
+
+        String caminhoImagem = "";
+
+        if (nomeCenario.equals("Entrada")) {
+
+            caminhoImagem = "/Cenários/entrada.png";
+
+        } else if (nomeCenario.equals("Corredor")) {
+
+            caminhoImagem = "/Cenários/corredor.png";
+
+        } else if (nomeCenario.equals("Bar")) {
+
+            caminhoImagem = "/Cenários/bar.png";
+        }
+
+        try {
+
+            InputStream stream = getClass().getResourceAsStream(caminhoImagem);
+
+            if (stream == null) {
+                throw new RuntimeException("Cenário não encontrado: " + caminhoImagem);
+            }
+
+            background = ImageIO.read(stream);
+
+        } catch (Exception e) {
+
+            System.out.println("ERRO AO CARREGAR CENARIO: " + caminhoImagem);
+            e.printStackTrace();
+        }
     }
 
     public void paintComponent(Graphics g) {
