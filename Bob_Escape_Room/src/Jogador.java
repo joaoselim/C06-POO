@@ -6,9 +6,10 @@ import javax.imageio.ImageIO;
 public class Jogador {
 
     Controle controle;
+    Inventario inventario;
 
     //===== POSIÇÃO =====
-    int x = 100;
+    int x = 0;
 
     final int tamanhoPersonagem = 185;
 
@@ -111,6 +112,7 @@ public class Jogador {
             olhandoPraDireita = true;
         }
 
+        System.out.println(x);
         //===== ANIMACAO =====
         controleSprite++; // SERVE PARA CONTROLAR A VELOCIDADE NA TROCA DE FRAMES
 
